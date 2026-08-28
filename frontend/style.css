@@ -1,0 +1,370 @@
+:root {
+    --text-color: #333;
+    --background-color: #f4f4f4;
+    --header-background-color: #fff;
+    --soft-color: #888;
+    --contrast-color: #9e1dc2;
+}
+
+::selection {
+    background-color: var(--contrast-color);
+    color: var(--header-background-color);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+*:focus-visible {
+    outline: 2px solid var(--contrast-color);
+    outline-offset: 2px;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: "Metamorphous", Arial, serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+header {
+    background-color: var(--background-color);
+    width: 100%;
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px 0px 20px 0px;
+}
+
+h1 {
+    font-size: 2rem;
+    color: var(--text-color);
+    text-align: center;
+    margin: 20px 0;
+}
+
+button {
+    background-color: var(--contrast-color);
+    color: var(--header-background-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+button:hover {
+    background-color: var(--soft-color);
+}
+
+#game.hidden,
+#landing.hidden {
+    display: none;
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    align-items: center;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    font-family: "Lato", Arial, serif;
+    font-size: 0.7rem;
+    font-weight: 400;
+    background-color: var(--background-color);
+}
+
+/**************************************************************************/
+/* Gamepage Styles */
+/**************************************************************************/
+
+#game {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    width: 90%;
+    margin-top: 120px;
+    margin-bottom: 60px;
+}
+
+#game-info {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    flex: 0 0 calc(100% - 40px);
+    justify-content: center;
+}
+
+#local-title {
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+    width: 100%;
+    text-align: left;
+    align-items: center;
+    color: var(--text-color);
+}
+
+#local-title > * {
+    font-family: "Lato", Arial, serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 15px;
+}
+
+#local-title > h2 {
+    text-transform: uppercase;
+}
+
+#local-title > button {
+    background-color: var(--contrast-color);
+    color: var(--header-background-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-left: auto;
+}
+
+#game > :not(#game-info) {
+    flex: 1 1 calc(50%);
+    margin: 0px 2vw 5vh;
+} 
+
+#game-name {
+    color: var(--contrast-color);
+    /* text-transform: uppercase; */
+}
+
+/**************************************************************************/
+/* Leaderboard Styles */
+/**************************************************************************/
+
+.leaderboard {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    font-family: "Lato", Arial, serif;
+}
+
+.leaderboard thead th {
+    padding: 12px 15px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: var(--soft-color);
+    text-align: left;
+    border-bottom: 2px solid #eee;
+}
+
+.leaderboard thead .th-score {
+    text-align: right;
+}
+
+.leaderboard tbody td {
+    padding: 15px;
+    vertical-align: middle;
+    border-bottom: 1px solid #eee;
+    font-size: 0.95rem;
+}
+
+.leaderboard .rank {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-color);
+    width: 60px;
+    text-align: center;
+}
+
+.leaderboard .user {
+    display: flex;
+    align-items: center;
+}
+.leaderboard .user .avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover;
+}
+.leaderboard .user .username {
+    font-weight: 600;
+}
+
+.leaderboard .score {
+    text-align: right;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+/**************************************************************************/
+/* Control Panel Styles */
+/**************************************************************************/
+
+fieldset {
+    border: 1px solid var(--soft-color);
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+fieldset > legend {
+    font-weight: bold;
+    padding: 0 5px;
+}
+
+#control-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 20px;
+}
+
+#player-manager {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+#player-manager > .player-entry,
+#add-player-container {
+    flex: 1 1 calc(30% - 20px);
+    display: grid;
+    grid-template-columns: auto 1fr; 
+    gap: 8px 15px;
+    align-items: center;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid var(--soft-color);
+    border-radius: 5px;
+}
+
+#add-player-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--background-color);
+    cursor: pointer;
+    border: 1px dashed var(--soft-color);
+    order: 1;
+}
+
+#add-player-container > button {
+    height: 100%;
+    width: 100%;
+    background-color: transparent;
+    color: var(--soft-color);
+    border: none;
+    cursor: pointer;
+    transition: color 0.1s;
+    align-self: center;
+}
+
+
+#add-player-container > button:hover {
+    color: var(--contrast-color);
+    border-color: var(--contrast-color);
+}
+
+#add-player-container > button > svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+    stroke: currentColor;
+}
+
+#player-manager > .player-entry > .player-name {
+    grid-column: 1 / -1;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#player-manager > .player-entry > input[type="checkbox"] {
+    justify-self: start;
+    accent-color: var(--contrast-color);
+}
+
+#round-winners {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+#round-winners > div {
+    flex: 1 1 20%;
+    display: flex;
+    justify-content: center;
+    margin: 5px;
+}
+
+#round-winners input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+#round-winners label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border: 2px solid var(--soft-color);
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.1s, border-color 0.1s;
+}
+
+#round-winners label:hover {
+    background-color: var(--soft-color);
+}
+
+#round-winners input[type="radio"]:checked + label {
+    background-color: var(--contrast-color);
+    color: var(--header-background-color);
+    border-color: var(--contrast-color);
+}
+
+#round-winners input[type="radio"]:focus-visible + label,
+#submit-round:focus-visible {
+    outline: 2px solid var(--contrast-color);
+    outline-offset: 2px;
+}
+
+#submit-round {
+    border-color: var(--contrast-color);
+    text-transform: uppercase;
+}
+
+#submit-round:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: var(--soft-color);
+}

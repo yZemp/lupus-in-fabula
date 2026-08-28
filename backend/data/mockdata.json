@@ -1,0 +1,55 @@
+{
+	"id": "mockdata",
+	"annotations": null,
+	"players": [
+		{
+			"id": "Alice",
+			"points": 0.01230001,
+			"rank": 2,
+			"ready": true
+		},
+		{
+			"id": "Bob",
+			"points": 0.294254,
+			"rank": 0,
+			"ready": false
+		},
+		{
+			"id": "Charlie",
+			"points": -0.1567432563,
+			"rank": 3,
+			"ready": false
+		},
+		{
+			"id": "Dave",
+			"points": 0.274,
+			"rank": 1,
+			"ready": false
+		}
+	],
+	"rounds": 1,
+	"scoreHistory": [
+		{
+			"round": 0,
+            "date": "2024-06-20T12:00:00Z",
+			"scores": {
+				"Alice": 0,
+				"Bob": 0,
+				"Charlie": 0,
+				"Dave": 0
+			},
+			"winner": null
+		},
+		{
+			"round": 1,
+            "date": "2024-06-20T12:05:00Z",
+			"scores": {
+				"Alice": 0.01230001,
+				"Bob": 0.294254,
+				"Charlie": -0.1567432563,
+				"Dave": 0.274
+			},
+			"winner": 1
+		}
+	]
+}
