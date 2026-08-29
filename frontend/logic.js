@@ -128,7 +128,7 @@ async function _loadGameData(gameData) {
         // Display rank starting from 1
         document.querySelectorAll(".leaderboard-entry .rank")[i].textContent = gameData.players[i].rank + 1;
         document.querySelectorAll(".leaderboard-entry .username")[i].textContent = gameData.players[i].id;
-        const formattedScore = (gameData.players[i].points * 1000)
+        const formattedScore = (gameData.players[i].points * 1)
             .toFixed(2)
             .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
         document.querySelectorAll(".leaderboard-entry .score")[i].textContent = formattedScore;

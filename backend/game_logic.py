@@ -38,58 +38,57 @@ def instantiate_players(incoming_payload: Dict[str, PlayerState], saved_data: di
 
 
 
-def compute_round_score(players: list[Player], winners: int) -> tuple[dict[str, float], float]:
+def compute_round_score(players: list[Player], winner: int) -> tuple[dict[str, float], float]:
 
     # Constants
-    k = 2.8 # Empirical estimate of (lupo / buono) power ratio 
+    k = 2.8 # Empirical estimate of (lupo / buono) power ratio k = 2.8
+    P = 10 # Base points
+     
     N = len(players)
-    V = sum([1 for p in players if p.role == Role.BUONO])
-    L = sum([1 for p in players if p.role == Role.LUPO])
-    alpha = (L * k) / V # Lupi advantage factor
-
+    V = sum(1 for p in players if p.role == Role.BUONO)
+    L = sum(1 for p in players if p.role == Role.LUPO)
+    alpha = (L * k) / V  # Theoretical power ratio of Lupi to Buoni
     logger.info(f"Alpha: {alpha} - (the lesser the stronger is the Buoni)")
-
-    criceto_bitten = True if any(p.role == Role.CRIC_CONVERTITO for p in players) else False
 
     # If alpha < 1: Lupi should be theoretically weaker than Buoni
     # If alpha ~1: Lupi and Buoni should be theoretically balanced
     # If alpha > 1: Lupi should be theoretically stronger than Buoni
-    
-    raw_scores = {}
 
-    # Compute raw scores based on the winner and player roles
-    for p in players:
-        if winners == Winners.FOLLE:
-            raw_scores[p.name] = 2 * math.log(N) if p.role == Role.FOLLE else -1.0
+    # Probabilities of winning for Buoni and Lupi based on alpha and k
+    deltas = {}
+
+    for player in players:
+        if winner == Winners.PATTA:
+            deltas[player.name] = 0.0
             continue
 
-        # Else (Buoni vs Lupi)
-        if p.role == Role.FOLLE:
-            raw_scores[p.name] = -1.0
-            continue
+        if winner == Winners.BUONI:
+            if player.role == Role.BUONO or player.role == Role.CRIC_NON_CONVERTITO:
+                deltas[player.name] = P * alpha
+            elif player.role == Role.LUPO or player.role == Role.CRIC_CONVERTITO:
+                deltas[player.name] = - P * alpha
+            elif player.role == Role.FOLLE:
+                deltas[player.name] = - P / 10
 
-        if p.role == Role.CRIC_NON_CONVERTITO or p.role == Role.CRIC_CONVERTITO:
-            if not criceto_bitten and winners == Winners.BUONI:
-                raw_scores[p.name] = 1.5 * alpha
-            elif criceto_bitten and winners == Winners.LUPI:
-                raw_scores[p.name] = 1 / k
+            # Bonus points for Cric non convertito if Buoni win
+            if player.role == Role.CRIC_NON_CONVERTITO:
+                deltas[player.name] = deltas[player.name] + P / 2
+
+        if winner == Winners.LUPI:
+            if player.role == Role.LUPO or player.role == Role.CRIC_CONVERTITO:
+                deltas[player.name] = P / alpha
+            elif player.role == Role.BUONO or player.role == Role.CRIC_NON_CONVERTITO:
+                deltas[player.name] = - P / alpha
+            elif player.role == Role.FOLLE:
+                deltas[player.name] = - P / 10
+
+        if winner == Winners.FOLLE:
+            if player.role == Role.FOLLE:
+                deltas[player.name] = 2 * P * math.log(N)
             else:
-                raw_scores[p.name] = - (1 / k) if winners == Winners.LUPI else - 1 / alpha
-            continue
+                deltas[player.name] = - P / 2
 
-        if winners == Winners.BUONI:
-            raw_scores[p.name] = alpha if p.role == Role.BUONO else - 1 / k
-        elif winners == Winners.LUPI:
-            raw_scores[p.name] = (1 / alpha) if p.role == Role.LUPO else - 1 / k
-
-    # Normalize scores to a zero-sum distribution
-    total_raw = sum(raw_scores.values())
-    shift = total_raw / N
-    
-    final_scores = {name: score - shift for name, score in raw_scores.items()}
-
-    return (final_scores, alpha)
-
+    return (deltas, alpha)
 
 
 def update_save_file(file_path: Path, score_deltas: Dict[str, float], winner: int, payload_players: Dict[str, PlayerState], alpha: float):
@@ -192,10 +191,16 @@ def add_new_player(file_path: Path, player_name: str, active: bool) -> dict:
     if any(player["id"] == player_name for player in data["players"]):
         raise ValueError(f"Player {player_name} already exists in the game.")
 
-    # Add new player
+    # Add new player with initial score = median score of existing players or 0 if no players exist
+    if data["players"]:
+        existing_scores = [player["points"] for player in data["players"]]
+        median_score = sorted(existing_scores)[len(existing_scores) // 2]
+    else:
+        median_score = 0.0
+
     new_player = {
         "id": player_name,
-        "points": 0.0,
+        "points": median_score,
         "delta": 0.0,
         "active": active
     }

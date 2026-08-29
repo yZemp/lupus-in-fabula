@@ -1,0 +1,70 @@
+{
+    "id": "DIOANIMALESCO",
+    "annotations": null,
+    "players": [
+        {
+            "id": "Alfonso",
+            "points": 0.9857,
+            "delta": 0.9857,
+            "active": true
+        },
+        {
+            "id": "Barbara",
+            "points": -0.0857,
+            "delta": -0.0857,
+            "active": true
+        },
+        {
+            "id": "Coglione",
+            "points": -0.0857,
+            "delta": -0.0857,
+            "active": true
+        },
+        {
+            "id": "Diocane",
+            "points": -0.7286,
+            "delta": -0.7286,
+            "active": true
+        },
+        {
+            "id": "Evaristo",
+            "points": -0.0857,
+            "delta": -0.0857,
+            "active": true
+        }
+    ],
+    "rounds": 1,
+    "scoreHistory": [
+        {
+            "round": 0,
+            "winner": null
+        },
+        {
+            "round": 1,
+            "alpha": 1.4,
+            "scores": {
+                "Alfonso": 0.9857,
+                "Barbara": -0.0857,
+                "Coglione": -0.0857,
+                "Diocane": -0.7286,
+                "Evaristo": -0.0857
+            },
+            "deltas": {
+                "Alfonso": 0.9857,
+                "Barbara": -0.0857,
+                "Coglione": -0.0857,
+                "Diocane": -0.7286,
+                "Evaristo": -0.0857
+            },
+            "winner": "LUPI",
+            "date": "2026-08-29T15:31:27.683423",
+            "active": {
+                "Alfonso": true,
+                "Barbara": true,
+                "Coglione": true,
+                "Diocane": true,
+                "Evaristo": true
+            }
+        }
+    ]
+}
