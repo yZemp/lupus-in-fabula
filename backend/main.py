@@ -55,12 +55,13 @@ async def update_game_data(gameID: str, payload: GamePayload):
 
     active_players = instantiate_players(payload.players, existing_data)
     logger.info(f"Working with these active players: {[(p.name, p.role) for p in active_players]}")
-    round_scores = compute_round_score(active_players, payload.roundWonBy)
+    round_scores, alpha = compute_round_score(active_players, payload.roundWonBy)
     
     logger.info(f"Computed round scores: {round_scores}")
+    logger.info(f"Computed alpha: {alpha}")
     logger.info(f"Writing data to {file_path} with winner: {Winners(payload.roundWonBy).name}")
 
-    update_save_file(file_path, round_scores, payload.roundWonBy, payload.players)
+    update_save_file(file_path, round_scores, payload.roundWonBy, payload.players, alpha)
 
     return {
         "success": True,
@@ -93,7 +94,7 @@ async def api_add_player(gameID: str, payload: NewPlayerPayload):
         raise HTTPException(status_code = 404, detail = "Game data not found.")
 
     try:
-        add_new_player(file_path, payload.playerName)
+        add_new_player(file_path, payload.playerName, active = True)
         return {"success": True, "message": f"New player {payload.playerName} added to game {gameID}."}
     except FileExistsError as e:
         raise HTTPException(status_code = 409, detail = str(e))

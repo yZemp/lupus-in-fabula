@@ -1,5 +1,6 @@
 from datetime import datetime
 import json
+import math
 from pathlib import Path
 from utils import Role, Winners, PlayerState, logger, Player
 from typing import Dict, List
@@ -36,10 +37,11 @@ def instantiate_players(incoming_payload: Dict[str, PlayerState], saved_data: di
     return active_players
 
 
-def compute_round_score(players: list[Player], winners: int) -> dict[str, float]:
+
+def compute_round_score(players: list[Player], winners: int) -> tuple[dict[str, float], float]:
 
     # Constants
-    k = 2.2 # Empirical estimate of (lupo / buono) power ratio 
+    k = 2.8 # Empirical estimate of (lupo / buono) power ratio 
     N = len(players)
     V = sum([1 for p in players if p.role == Role.BUONO])
     L = sum([1 for p in players if p.role == Role.LUPO])
@@ -58,7 +60,7 @@ def compute_round_score(players: list[Player], winners: int) -> dict[str, float]
     # Compute raw scores based on the winner and player roles
     for p in players:
         if winners == Winners.FOLLE:
-            raw_scores[p.name] = (N / 3) if p.role == Role.FOLLE else -1.0
+            raw_scores[p.name] = 2 * math.log(N) if p.role == Role.FOLLE else -1.0
             continue
 
         # Else (Buoni vs Lupi)
@@ -68,17 +70,17 @@ def compute_round_score(players: list[Player], winners: int) -> dict[str, float]
 
         if p.role == Role.CRIC_NON_CONVERTITO or p.role == Role.CRIC_CONVERTITO:
             if not criceto_bitten and winners == Winners.BUONI:
-                raw_scores[p.name] = 2 * alpha
+                raw_scores[p.name] = 1.5 * alpha
             elif criceto_bitten and winners == Winners.LUPI:
-                raw_scores[p.name] = 1 / alpha
+                raw_scores[p.name] = 1 / k
             else:
-                raw_scores[p.name] = - (1 / k) if winners == Winners.LUPI else -k 
+                raw_scores[p.name] = - (1 / k) if winners == Winners.LUPI else - 1 / alpha
             continue
 
         if winners == Winners.BUONI:
-            raw_scores[p.name] = alpha if p.role == Role.BUONO else -k
+            raw_scores[p.name] = alpha if p.role == Role.BUONO else - 1 / k
         elif winners == Winners.LUPI:
-            raw_scores[p.name] = (1 / alpha) if p.role == Role.LUPO else -(1 / k)
+            raw_scores[p.name] = (1 / alpha) if p.role == Role.LUPO else - 1 / k
 
     # Normalize scores to a zero-sum distribution
     total_raw = sum(raw_scores.values())
@@ -86,13 +88,11 @@ def compute_round_score(players: list[Player], winners: int) -> dict[str, float]
     
     final_scores = {name: score - shift for name, score in raw_scores.items()}
 
-    return final_scores
+    return (final_scores, alpha)
 
 
 
-
-def update_save_file(file_path: Path, score_deltas: Dict[str, float], winner: int, payload_players: Dict[str, PlayerState]):
-
+def update_save_file(file_path: Path, score_deltas: Dict[str, float], winner: int, payload_players: Dict[str, PlayerState], alpha: float):
     with open(file_path, "r") as file:
         data = json.load(file)
 
@@ -123,11 +123,12 @@ def update_save_file(file_path: Path, score_deltas: Dict[str, float], winner: in
     # Add new entry to score history for the current round
     history_entry = {
         "round": current_round,
+        "alpha": alpha,
         "scores": {p["id"]: p["points"] for p in data["players"]},
         "deltas": {p["id"]: p.get("delta", 0.0) for p in data["players"]},
         "winner": str(Winners(winner).name),
         "date": datetime.now().isoformat(),
-        "active": {p["id"]: p.get("active", False) for p in data["players"]}
+        "active": {p["id"]: p.get("active", False) for p in data["players"]},
     }
     data["scoreHistory"].append(history_entry)
 
@@ -174,7 +175,7 @@ def create_new_game(file_path: Path, game_id: str, player_names: List[str]) -> d
     return initial_data
 
 
-def add_new_player(file_path: Path, player_name: str) -> dict:
+def add_new_player(file_path: Path, player_name: str, active: bool) -> dict:
     '''
     Add a new player to an existing game.
     Raises FileNotFoundError if the game does not exist.
@@ -196,6 +197,7 @@ def add_new_player(file_path: Path, player_name: str) -> dict:
         "id": player_name,
         "points": 0.0,
         "delta": 0.0,
+        "active": active
     }
     data["players"].append(new_player)
 
