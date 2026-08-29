@@ -149,6 +149,10 @@ async function _loadNextRoundData(gameData) {
         const newPlayer = _createNewPlayerEntry(playerId, gameData.players[i].active, gameData.players[i].role);
         
         document.querySelector("#player-manager").appendChild(newPlayer);
+
+        if (!gameData.players[i].active) {
+            document.querySelector(`#active_${playerId}`).checked = false;
+        }
     }
 }
 

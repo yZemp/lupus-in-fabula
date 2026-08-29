@@ -4,7 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 
 from utils import Winners, logger, GamePayload, NewGamePayload, NewPlayerPayload
-from game_logic import compute_round_score, instantiate_active_players, create_new_game, update_save_file, add_new_player
+from game_logic import compute_round_score, instantiate_players, create_new_game, update_save_file, add_new_player
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_FILE_PATH = BASE_DIR / "data"
@@ -53,14 +53,14 @@ async def update_game_data(gameID: str, payload: GamePayload):
     with open(file_path, "r") as file:
         existing_data = json.load(file)
 
-    active_players = instantiate_active_players(payload.players, existing_data)
+    active_players = instantiate_players(payload.players, existing_data)
     logger.info(f"Working with these active players: {[(p.name, p.role) for p in active_players]}")
     round_scores = compute_round_score(active_players, payload.roundWonBy)
     
     logger.info(f"Computed round scores: {round_scores}")
     logger.info(f"Writing data to {file_path} with winner: {Winners(payload.roundWonBy).name}")
 
-    update_save_file(file_path, round_scores, payload.roundWonBy)
+    update_save_file(file_path, round_scores, payload.roundWonBy, payload.players)
 
     return {
         "success": True,

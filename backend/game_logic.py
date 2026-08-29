@@ -5,10 +5,11 @@ from utils import Role, Winners, PlayerState, logger, Player
 from typing import Dict, List
 
 
-def instantiate_active_players(incoming_payload: Dict[str, PlayerState], saved_data: dict) -> list[Player]:
+def instantiate_players(incoming_payload: Dict[str, PlayerState], saved_data: dict) -> list[Player]:
     '''
     Instantiate active players based on the incoming payload and saved data.
     '''
+
     # Create a mapping of saved players for quick lookup
     saved_players_map = {p["id"]: p for p in saved_data.get("players", [])}
     
@@ -88,7 +89,9 @@ def compute_round_score(players: list[Player], winners: int) -> dict[str, float]
     return final_scores
 
 
-def update_save_file(file_path: Path, score_deltas: Dict[str, float], winner: int):
+
+
+def update_save_file(file_path: Path, score_deltas: Dict[str, float], winner: int, payload_players: Dict[str, PlayerState]):
 
     with open(file_path, "r") as file:
         data = json.load(file)
@@ -97,7 +100,18 @@ def update_save_file(file_path: Path, score_deltas: Dict[str, float], winner: in
     data["rounds"] += 1
     current_round = data["rounds"]
 
-    # Update player scores with delta and total points
+    # Mapping saved players for O(1) lookup
+    saved_players_map = {p["id"]: p for p in data["players"]}
+
+    # Upsert players based on the incoming payload
+    for pid, state in payload_players.items():
+        if pid not in saved_players_map:
+            raise ValueError(f"Player {pid} not found in saved data. This should not happen. You fucked up somewhere.")
+        else:
+            # Correct: update active status
+            saved_players_map[pid]["active"] = state.active
+
+    # Update all player scores with delta and total points
     for player in data["players"]:
         pid = player["id"]
         if pid in score_deltas:
@@ -112,7 +126,8 @@ def update_save_file(file_path: Path, score_deltas: Dict[str, float], winner: in
         "scores": {p["id"]: p["points"] for p in data["players"]},
         "deltas": {p["id"]: p.get("delta", 0.0) for p in data["players"]},
         "winner": str(Winners(winner).name),
-        "date": datetime.now().isoformat()
+        "date": datetime.now().isoformat(),
+        "active": {p["id"]: p.get("active", False) for p in data["players"]}
     }
     data["scoreHistory"].append(history_entry)
 
@@ -141,6 +156,7 @@ def create_new_game(file_path: Path, game_id: str, player_names: List[str]) -> d
                 "id": name,
                 "points": 0.0,
                 "delta": 0.0,
+                "active": True,
             } for name in player_names
         ],
         "rounds": 0,
