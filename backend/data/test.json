@@ -1,75 +1,87 @@
 {
-    "id": "test",
+    "id": "tes",
     "annotations": null,
     "players": [
         {
             "id": "A",
-            "points": 5.8571,
-            "delta": -1.0,
+            "points": 0.0,
+            "delta": 0.0,
             "active": true
         },
         {
             "id": "B",
-            "points": 14.0,
-            "delta": 7.1429,
+            "points": 0.0,
+            "delta": 0.0,
             "active": true
         },
         {
             "id": "C",
-            "points": 19.0,
-            "delta": 7.1429,
+            "points": 0.0,
+            "delta": 0.0,
             "active": true
         },
         {
             "id": "D",
-            "points": -9.1429,
-            "delta": -7.1429,
+            "points": 0.0,
+            "delta": 0.0,
             "active": true
         },
         {
             "id": "E",
-            "points": -14.0,
-            "delta": -7.1429,
+            "points": 0.0,
+            "delta": 0.0,
             "active": true
         },
         {
-            "id": "nuovo",
-            "points": -0.2858,
-            "delta": -7.1429,
+            "id": "F",
+            "points": 0.0,
+            "delta": 0.0,
             "active": true
         },
         {
-            "id": "sos",
-            "points": -0.2858,
-            "delta": -7.1429,
+            "id": "G",
+            "points": 0.0,
+            "delta": 0.0,
             "active": true
         },
         {
-            "id": "sas",
-            "points": -0.2858,
-            "delta": -7.1429,
+            "id": "H",
+            "points": 0.0,
+            "delta": 0.0,
             "active": true
         },
         {
-            "id": "ses",
-            "points": 14.0,
-            "delta": 7.1429,
+            "id": "I",
+            "points": 0.0,
+            "delta": 0.0,
             "active": true
         },
         {
-            "id": "sis",
-            "points": -0.2858,
-            "delta": -7.1429,
+            "id": "J",
+            "points": 0.0,
+            "delta": 0.0,
             "active": true
         },
         {
-            "id": "sus",
-            "points": -0.2858,
-            "delta": -7.1429,
+            "id": "K",
+            "points": 0.0,
+            "delta": 0.0,
+            "active": true
+        },
+        {
+            "id": "L",
+            "points": 0.0,
+            "delta": 0.0,
+            "active": true
+        },
+        {
+            "id": "M",
+            "points": 0.0,
+            "delta": 0.0,
             "active": true
         }
     ],
-    "rounds": 3,
+    "rounds": 0,
     "scoreHistory": [
         {
             "round": 0,
@@ -78,105 +90,6 @@
             "winner": null,
             "date": null,
             "active": {}
-        },
-        {
-            "round": 1,
-            "alpha": 1.4,
-            "scores": {
-                "A": 14.0,
-                "B": 14.0,
-                "C": 19.0,
-                "D": -1.0,
-                "E": -14.0
-            },
-            "deltas": {
-                "A": 14.0,
-                "B": 14.0,
-                "C": 19.0,
-                "D": -1.0,
-                "E": -14.0
-            },
-            "winner": "BUONI",
-            "date": "2026-08-29T17:05:25.546806",
-            "active": {
-                "A": true,
-                "B": true,
-                "C": true,
-                "D": true,
-                "E": true
-            }
-        },
-        {
-            "round": 2,
-            "alpha": 1.4,
-            "scores": {
-                "A": 6.8571,
-                "B": 6.8571,
-                "C": 11.8571,
-                "D": -2.0,
-                "E": -6.8571
-            },
-            "deltas": {
-                "A": -7.1429,
-                "B": -7.1429,
-                "C": -7.1429,
-                "D": -1.0,
-                "E": 7.1429
-            },
-            "winner": "LUPI",
-            "date": "2026-08-29T17:06:03.488100",
-            "active": {
-                "A": true,
-                "B": true,
-                "C": true,
-                "D": true,
-                "E": true
-            }
-        },
-        {
-            "round": 3,
-            "alpha": 1.3999999999999997,
-            "scores": {
-                "A": 5.8571,
-                "B": 14.0,
-                "C": 19.0,
-                "D": -9.1429,
-                "E": -14.0,
-                "nuovo": -0.2858,
-                "sos": -0.2858,
-                "sas": -0.2858,
-                "ses": 14.0,
-                "sis": -0.2858,
-                "sus": -0.2858
-            },
-            "deltas": {
-                "A": -1.0,
-                "B": 7.1429,
-                "C": 7.1429,
-                "D": -7.1429,
-                "E": -7.1429,
-                "nuovo": -7.1429,
-                "sos": -7.1429,
-                "sas": -7.1429,
-                "ses": 7.1429,
-                "sis": -7.1429,
-                "sus": -7.1429
-            },
-            "winner": "LUPI",
-            "date": "2026-08-29T17:09:35.460520",
-            "active": {
-                "A": true,
-                "B": true,
-                "C": true,
-                "D": true,
-                "E": true,
-                "nuovo": true,
-                "sos": true,
-                "sas": true,
-                "ses": true,
-                "sis": true,
-                "sus": true
-            }
         }
     ]
 }

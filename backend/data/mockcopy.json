@@ -1,53 +1,94 @@
 {
-	"id": "mockcopy",
-	"annotations": null,
-	"players": [
-		{
-			"id": "Alice",
-			"points": 0.01230001,
-			"rank": 2,
-			"ready": true
-		},
-		{
-			"id": "Bob",
-			"points": 0.294254,
-			"rank": 0,
-			"ready": false
-		},
-		{
-			"id": "Charlie",
-			"points": -0.1567432563,
-			"rank": 3,
-			"ready": false
-		},
-		{
-			"id": "Dave",
-			"points": 0.274,
-			"rank": 1,
-			"ready": false
-		}
-	],
-	"rounds": 1,
-	"scoreHistory": [
-		{
-			"round": 0,
-			"scores": {
-				"Alice": 0,
-				"Bob": 0,
-				"Charlie": 0,
-				"Dave": 0
-			},
-			"winner": null
-		},
-		{
-			"round": 1,
-			"scores": {
-				"Alice": 0.01230001,
-				"Bob": 0.294254,
-				"Charlie": -0.1567432563,
-				"Dave": 0.274
-			},
-			"winner": 1
-		}
-	]
+    "id": "mockcopy",
+    "annotations": null,
+    "players": [
+        {
+            "id": "Alice",
+            "points": -4.9877,
+            "rank": 2,
+            "ready": true,
+            "active": true,
+            "delta": -5.0
+        },
+        {
+            "id": "Bob",
+            "points": -4.7057,
+            "rank": 0,
+            "ready": false,
+            "active": true,
+            "delta": -5.0
+        },
+        {
+            "id": "Charlie",
+            "points": -5.1567,
+            "rank": 3,
+            "ready": false,
+            "active": true,
+            "delta": -5.0
+        },
+        {
+            "id": "Dave",
+            "points": -4.726,
+            "rank": 1,
+            "ready": false,
+            "active": true,
+            "delta": -5.0
+        },
+        {
+            "id": "Edith",
+            "points": 32.4628,
+            "delta": 32.1888,
+            "active": true
+        }
+    ],
+    "rounds": 2,
+    "scoreHistory": [
+        {
+            "round": 0,
+            "scores": {
+                "Alice": 0,
+                "Bob": 0,
+                "Charlie": 0,
+                "Dave": 0
+            },
+            "winner": null
+        },
+        {
+            "round": 1,
+            "scores": {
+                "Alice": 0.01230001,
+                "Bob": 0.294254,
+                "Charlie": -0.1567432563,
+                "Dave": 0.274
+            },
+            "winner": 1
+        },
+        {
+            "round": 2,
+            "alpha": 1.4,
+            "scores": {
+                "Alice": -4.9877,
+                "Bob": -4.7057,
+                "Charlie": -5.1567,
+                "Dave": -4.726,
+                "Edith": 32.4628
+            },
+            "deltas": {
+                "Alice": -5.0,
+                "Bob": -5.0,
+                "Charlie": -5.0,
+                "Dave": -5.0,
+                "Edith": 32.1888
+            },
+            "winner": "FOLLE",
+            "date": "2026-08-29T17:22:59.690405",
+            "active": {
+                "Alice": true,
+                "Bob": true,
+                "Charlie": true,
+                "Dave": true,
+                "Edith": true
+            }
+        }
+    ]
 }

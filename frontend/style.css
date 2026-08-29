@@ -314,6 +314,7 @@ fieldset > legend {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    width: 90%;
 }
 
 #round-winners > div {

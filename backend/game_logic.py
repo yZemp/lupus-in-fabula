@@ -189,7 +189,7 @@ def add_new_player(file_path: Path, player_name: str, active: bool) -> dict:
 
     # Check if player already exists
     if any(player["id"] == player_name for player in data["players"]):
-        raise ValueError(f"Player {player_name} already exists in the game.")
+        raise ValueError("Player " + str(player_name) + " already exists in the game" + str(file_path.stem) + ".")
 
     # Add new player with initial score = median score of existing players or 0 if no players exist
     if data["players"]:

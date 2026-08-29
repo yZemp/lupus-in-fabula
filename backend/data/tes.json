@@ -1,5 +1,5 @@
 {
-    "id": "test",
+    "id": "tes",
     "annotations": null,
     "players": [
         {
@@ -28,6 +28,54 @@
         },
         {
             "id": "E",
+            "points": 0.0,
+            "delta": 0.0,
+            "active": true
+        },
+        {
+            "id": "F",
+            "points": 0.0,
+            "delta": 0.0,
+            "active": true
+        },
+        {
+            "id": "G",
+            "points": 0.0,
+            "delta": 0.0,
+            "active": true
+        },
+        {
+            "id": "H",
+            "points": 0.0,
+            "delta": 0.0,
+            "active": true
+        },
+        {
+            "id": "I",
+            "points": 0.0,
+            "delta": 0.0,
+            "active": true
+        },
+        {
+            "id": "J",
+            "points": 0.0,
+            "delta": 0.0,
+            "active": true
+        },
+        {
+            "id": "K",
+            "points": 0.0,
+            "delta": 0.0,
+            "active": true
+        },
+        {
+            "id": "L",
+            "points": 0.0,
+            "delta": 0.0,
+            "active": true
+        },
+        {
+            "id": "M",
             "points": 0.0,
             "delta": 0.0,
             "active": true
