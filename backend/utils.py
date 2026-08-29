@@ -17,6 +17,12 @@ class Winners(int, Enum):
     FOLLE = 2
     PATTA = 3
 
+class NewGamePayload(BaseModel):
+    playerNames: list[str]
+
+class NewPlayerPayload(BaseModel):
+    playerName: str
+
 class PlayerState(BaseModel):
     active: bool
     role: int

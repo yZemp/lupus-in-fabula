@@ -1,0 +1,28 @@
+{
+    "id": "test",
+    "annotations": null,
+    "players": [
+        {
+            "id": "A",
+            "points": 0.0,
+            "delta": 0.0
+        },
+        {
+            "id": "B",
+            "points": 0.0,
+            "delta": 0.0
+        },
+        {
+            "id": "C",
+            "points": 0.0,
+            "delta": 0.0
+        }
+    ],
+    "rounds": 0,
+    "scoreHistory": [
+        {
+            "round": 0,
+            "winner": null
+        }
+    ]
+}

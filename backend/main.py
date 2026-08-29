@@ -3,8 +3,8 @@ import os
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
 
-from utils import logger, GamePayload, PlayerState
-from game_logic import compute_round_score, instantiate_active_players
+from utils import Winners, logger, GamePayload, NewGamePayload, NewPlayerPayload
+from game_logic import compute_round_score, instantiate_active_players, create_new_game, update_save_file, add_new_player
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_FILE_PATH = BASE_DIR / "data"
@@ -58,7 +58,42 @@ async def update_game_data(gameID: str, payload: GamePayload):
     round_scores = compute_round_score(active_players, payload.roundWonBy)
     
     logger.info(f"Computed round scores: {round_scores}")
+    logger.info(f"Writing data to {file_path} with winner: {Winners(payload.roundWonBy).name}")
+
+    update_save_file(file_path, round_scores, payload.roundWonBy)
 
     return {
         "success": True,
+        "message": "Game data updated successfully."
     }
+
+
+# API endpoint to create a new game by game ID
+@app.post("/games/{gameID}/create")
+async def api_create_game(gameID: str, payload: NewGamePayload):
+    file_path = DATA_FILE_PATH / f"{gameID}.json"
+    
+    try:
+        create_new_game(file_path, gameID, payload.playerNames)
+        return {"success": True, "message": f"New game {gameID} created."}
+    except FileExistsError as e:
+        raise HTTPException(status_code = 409, detail = str(e))
+
+
+
+# API endpoint to add a new player to an existing game by game ID
+@app.post("/games/{gameID}/add_player")
+async def api_add_player(gameID: str, payload: NewPlayerPayload):
+    file_path = DATA_FILE_PATH / f"{gameID}.json"
+
+    if not os.path.abspath(file_path).startswith(str(DATA_FILE_PATH)):
+        raise HTTPException(status_code = 400, detail = "Invalid game ID.")
+
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code = 404, detail = "Game data not found.")
+
+    try:
+        add_new_player(file_path, payload.playerName)
+        return {"success": True, "message": f"New player {payload.playerName} added to game {gameID}."}
+    except FileExistsError as e:
+        raise HTTPException(status_code = 409, detail = str(e))

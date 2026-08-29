@@ -11,6 +11,41 @@ onload = () => {
     });
 }
 
+async function createGame() {
+    const gameID = prompt("Enter a unique game ID:");
+    if (!gameID) return;
+
+    const playersInput = prompt("Enter player names separated by commas (e.g., Alice,Bob,Charlie):");
+    const playerNames = playersInput ? playersInput.split(',').map(name => name.trim()).filter(name => name) : [];
+
+    try {
+        const response = await fetch(API_PATH + `/games/${gameID}/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                playerNames: playerNames
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            const errorMessage = errorData.detail || response.statusText;
+            throw new Error(`HTTP Error ${response.status}: ${errorMessage}`);
+        }
+
+        const data = await response.json();
+        if (data.success) {
+            console.log(`Game "${gameID}" created successfully.`);
+            document.getElementById("game-selector").value = gameID;
+        } else {
+            throw new Error(`API Error: ${data.message || 'Unknown backend error'}`);
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
 
 
 async function loadGame() {
@@ -18,6 +53,7 @@ async function loadGame() {
     _loadGameData(data.gameData);
     _loadNextRoundData(data.gameData);
 }
+
 
 async function _fetchGameFile() {
     console.log("Fetching game status...");
@@ -71,9 +107,12 @@ async function _loadGameData(gameData) {
         leaderboardElements[i].remove();
     }
     
-    // Sort players by rank
-    gameData.players.sort((a, b) => a.rank - b.rank);
-    
+    // Sort players by score
+    gameData.players.sort((a, b) => b.points - a.points);
+    gameData.players.forEach((player, index) => {
+        player.rank = index; // Assign rank based on sorted order
+    });
+
     // Populate the leaderboard with the received game data
     for (let i = 0; i < gameData.players.length; i++) {
 
@@ -207,5 +246,28 @@ function addPlayer() {
 
         const newPlayerEntry = _createNewPlayerEntry(newPlayerId);
         playerManager.appendChild(newPlayerEntry);
+
+        // Add the new player to the backend
+        const gameID = document.getElementById("game-name").textContent;
+        fetch(API_PATH + `/games/${gameID}/add_player`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ playerName: newPlayerId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log(`Player "${newPlayerId}" added to game "${gameID}" successfully.`);
+            } else {
+                throw new Error(`API Error: ${data.message || 'Unknown backend error'}`);
+            }
+
+            loadGame(); // Refresh the game data to reflect the new player
+        })
+        .catch(e => {
+            console.error(e);
+        });
     }
 }

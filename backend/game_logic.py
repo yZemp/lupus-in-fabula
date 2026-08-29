@@ -1,5 +1,8 @@
+from datetime import datetime
+import json
+from pathlib import Path
 from utils import Role, Winners, PlayerState, logger, Player
-from typing import Dict
+from typing import Dict, List
 
 
 def instantiate_active_players(incoming_payload: Dict[str, PlayerState], saved_data: dict) -> list[Player]:
@@ -53,7 +56,7 @@ def compute_round_score(players: list[Player], winners: int) -> dict[str, float]
 
     # Compute raw scores based on the winner and player roles
     for p in players:
-        if winners == 2:  # Folle wins
+        if winners == Winners.FOLLE:
             raw_scores[p.name] = (N / 3) if p.role == Role.FOLLE else -1.0
             continue
 
@@ -83,3 +86,105 @@ def compute_round_score(players: list[Player], winners: int) -> dict[str, float]
     final_scores = {name: score - shift for name, score in raw_scores.items()}
 
     return final_scores
+
+
+def update_save_file(file_path: Path, score_deltas: Dict[str, float], winner: int):
+
+    with open(file_path, "r") as file:
+        data = json.load(file)
+
+    # Update the round count
+    data["rounds"] += 1
+    current_round = data["rounds"]
+
+    # Update player scores with delta and total points
+    for player in data["players"]:
+        pid = player["id"]
+        if pid in score_deltas:
+            player["points"] = round(player["points"] + score_deltas[pid], 4)
+            player["delta"] = round(score_deltas[pid], 4)
+        else:
+            player["delta"] = 0.0  # Delta = 0 for inactive players
+
+    # Add new entry to score history for the current round
+    history_entry = {
+        "round": current_round,
+        "scores": {p["id"]: p["points"] for p in data["players"]},
+        "deltas": {p["id"]: p.get("delta", 0.0) for p in data["players"]},
+        "winner": str(Winners(winner).name),
+        "date": datetime.now().isoformat()
+    }
+    data["scoreHistory"].append(history_entry)
+
+    # Write data
+    with open(file_path, "w") as file:
+        json.dump(data, file, indent = 4)
+
+
+
+def create_new_game(file_path: Path, game_id: str, player_names: List[str]) -> dict:
+    '''
+    Init new game with the specified player names.
+    Raises FileExistsError if the game already exists.
+    '''
+
+    if file_path.exists():
+        raise FileExistsError(f"Game {game_id} already exists.")
+
+    file_path.parent.mkdir(parents = True, exist_ok = True)
+
+    initial_data = {
+        "id": game_id,
+        "annotations": None,
+        "players": [
+            {
+                "id": name,
+                "points": 0.0,
+                "delta": 0.0,
+            } for name in player_names
+        ],
+        "rounds": 0,
+        "scoreHistory": [
+            {
+                "round": 0,
+                "winner": None
+            }
+        ]
+    }
+
+    with open(file_path, "w") as file:
+        json.dump(initial_data, file, indent = 4)
+        
+    return initial_data
+
+
+def add_new_player(file_path: Path, player_name: str) -> dict:
+    '''
+    Add a new player to an existing game.
+    Raises FileNotFoundError if the game does not exist.
+    Raises ValueError if the player already exists.
+    '''
+
+    if not file_path.exists():
+        raise FileNotFoundError(f"Game data for {file_path.stem} not found.")
+
+    with open(file_path, "r") as file:
+        data = json.load(file)
+
+    # Check if player already exists
+    if any(player["id"] == player_name for player in data["players"]):
+        raise ValueError(f"Player {player_name} already exists in the game.")
+
+    # Add new player
+    new_player = {
+        "id": player_name,
+        "points": 0.0,
+        "delta": 0.0,
+    }
+    data["players"].append(new_player)
+
+    # Write updated data back to file
+    with open(file_path, "w") as file:
+        json.dump(data, file, indent = 4)
+
+    return new_player
