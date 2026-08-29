@@ -2,7 +2,7 @@ from datetime import datetime
 import json
 import math
 from pathlib import Path
-from utils import Role, Winners, PlayerState, logger, Player
+from utils import BASE_POINTS, KONST, Role, Winners, PlayerState, logger, Player
 from typing import Dict, List
 
 
@@ -41,8 +41,8 @@ def instantiate_players(incoming_payload: Dict[str, PlayerState], saved_data: di
 def compute_round_score(players: list[Player], winner: int) -> tuple[dict[str, float], float]:
 
     # Constants
-    k = 2.8 # Empirical estimate of (lupo / buono) power ratio k = 2.8
-    P = 10 # Base points
+    k = KONST # Empirical estimate of (lupo / buono) power ratio k = 2.8
+    P = BASE_POINTS # Base points
      
     N = len(players)
     V = sum(1 for p in players if p.role == Role.BUONO)
@@ -59,7 +59,7 @@ def compute_round_score(players: list[Player], winner: int) -> tuple[dict[str, f
 
     for player in players:
         if winner == Winners.PATTA:
-            deltas[player.name] = 0.0
+            deltas[player.name] = P / 2
             continue
 
         if winner == Winners.BUONI:
@@ -72,7 +72,7 @@ def compute_round_score(players: list[Player], winner: int) -> tuple[dict[str, f
 
             # Bonus points for Cric non convertito if Buoni win
             if player.role == Role.CRIC_NON_CONVERTITO:
-                deltas[player.name] = deltas[player.name] + P / 2
+                deltas[player.name] = deltas[player.name] + P
 
         if winner == Winners.LUPI:
             if player.role == Role.LUPO or player.role == Role.CRIC_CONVERTITO:
@@ -87,6 +87,12 @@ def compute_round_score(players: list[Player], winner: int) -> tuple[dict[str, f
                 deltas[player.name] = 2 * P * math.log(N)
             else:
                 deltas[player.name] = - P / 2
+
+        # Bonus point to everybody jujst for playing the game
+        # This is to increase, in average, the mean of the score distribution
+        # And discourage players from not playing the game at all when they are winning
+        deltas[player.name] = deltas[player.name] + P / 5
+
 
     return (deltas, alpha)
 
@@ -128,6 +134,7 @@ def update_save_file(file_path: Path, score_deltas: Dict[str, float], winner: in
         "winner": str(Winners(winner).name),
         "date": datetime.now().isoformat(),
         "active": {p["id"]: p.get("active", False) for p in data["players"]},
+        "mean_delta": round(sum(score_deltas.values()) / len(score_deltas), 4) if score_deltas else 0.0
     }
     data["scoreHistory"].append(history_entry)
 
@@ -163,7 +170,13 @@ def create_new_game(file_path: Path, game_id: str, player_names: List[str]) -> d
         "scoreHistory": [
             {
                 "round": 0,
-                "winner": None
+                "winner": None,
+                "alpha": 1.0,
+                "scores": {},
+                "deltas": {},
+                "date": datetime.now().isoformat(),
+                "active": {},
+                "mean_delta": 0.0
             }
         ]
     }

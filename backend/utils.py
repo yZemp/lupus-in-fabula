@@ -4,6 +4,9 @@ from enum import Enum
 import logging
 import sys
 
+KONST = 2.8 # Empirical estimate of (lupo / buono) power ratio k = 2.8
+BASE_POINTS = 10 # Base points
+
 class Role(int, Enum):
     BUONO = 0
     LUPO = 1

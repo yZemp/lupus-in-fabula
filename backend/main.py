@@ -71,7 +71,7 @@ async def update_game_data(gameID: str, payload: GamePayload):
 
 # API endpoint to create a new game by game ID
 @app.post("/games/{gameID}/create")
-async def api_create_game(gameID: str, payload: NewGamePayload):
+async def create_game(gameID: str, payload: NewGamePayload):
     file_path = DATA_FILE_PATH / f"{gameID}.json"
     
     try:
